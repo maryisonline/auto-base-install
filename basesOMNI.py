@@ -9,23 +9,26 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
+import time
 
-# configuracoes do webdriver
+# configuracoes do webdriver / o parametro "options" ajuda a definir as preferencias do navegador do Chrome
 servico = Service(ChromeDriverManager().install())
-options = webdriver.ChromeOptions()
+opcoes = webdriver.ChromeOptions()
 
 # definindo o caminho do download
-Caminho_Download = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\downloadOMNI'
+Caminho_Download = r'C:\Users\mary saotome\Desktop\teste-download'
 prefs = {'download.default_directory': Caminho_Download}
 
+# permite adicionar essas preferencias ao navegador utilizado 
+opcoes.add_experimental_option('prefs',prefs)
 
-web = webdriver.Chrome(service=servico)
+web = webdriver.Chrome(service=servico, options=opcoes)
 web.implicitly_wait(15)
 
 # pagina de login
-web.get("https://site.omni.com.br/#/")
-Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('757XXX')
-Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('757XXX@SITE')
+web.get("http://pernambucanas.plusoftomni.com.br/")
+Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('757572')
+Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('757572@PERNAMBUCANAS')
 Entrar = web.find_element(By.XPATH,'//*[@id="loginBase"]/div[1]/div[5]/button').click()
 
 # processo para acessar o Report Builder
@@ -47,12 +50,8 @@ Relatorio1 = web.find_element(By.XPATH, '/html/body/div[1]/div/div[2]/div/div[2]
 actions = ActionChains(web)
 actions.double_click(Relatorio1).perform()
 # ira servir para qualquer relatorio que quiser baixar
-Baixar = web.find_element(By.XPATH, '//*[@id="div-dropdown-menu"]/button').click()
+Baixar = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="div-dropdown-menu"]/button')))
+web.execute_script("arguments[0].click()", Baixar)
 CSVFile = web.find_element(By.XPATH, '//*[@id="btn-text"]').click()
 
-
-
-
-
-
-
+# funcao para aguardar o download e renomear o arquivo
