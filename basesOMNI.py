@@ -9,6 +9,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, ElementNotInteractableException
 import time
 import os
 
@@ -50,28 +51,41 @@ PastaCSUMIS.click()
 Relatorio1 = web.find_element(By.CSS_SELECTOR, 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(1) > a > span.icon-text')
 actions = ActionChains(web)
 actions.double_click(Relatorio1).perform()
-# ira servir para qualquer relatorio que quiser baixar
-Baixar = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="div-dropdown-menu"]/button')))
-# comando em Javascript para clicar no elemento (que foi definido acima)
-web.execute_script("arguments[0].click()", Baixar)
+
+# loop que ira tentar varias vezes verificar se o elemento do botao esta disponivel para ser interagido na pagina
+
+def tentativa_botao():
+    # enquanto for verdadeiro, tente:
+    while True:
+        try:
+            # ira servir para qualquer relatorio que quiser baixar
+            Baixar = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="div-dropdown-menu"]/button')))
+            # comando em Javascript para clicar no elemento (que foi definido acima)
+            web.execute_script("arguments[0].click()", Baixar)
+
+            break
+        except (TimeoutException, ElementNotInteractableException):
+
+            continue
+        
 #web.implicitly_wait(40)
 CSVFile = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#btn-text')))
 web.execute_script("arguments[0].click()", CSVFile)
 
 # funcao para renomear o arquivo csv (Atendimentos Finalizados)
 # explicacao da funcao: 
-def esperar_download(Caminho_Download, NovoNome, timeout=30):
-    # estabelecendo um tempo limite que eh o tempo atual somado ao limite que eh 30 seg
-    Tempo_Limite = time.time() + timeout
-    # iniciando um loop
-    while True:
-        # se o tempo atual for acima do tempo limite ira aparecer uma mensagem de erro
-        if time.time() > Tempo_Limite:
-            raise Exception("Download do arquivo falhou/ultrapassou o tempo limite estabelecido.")
-        Arquivos = os.listdir(Caminho_Download)
-        if Arquivos:
-            # ordena os arquivos no caminho especificado pela ultima data de modificacao
-            Arquivos = sorted(Arquivos, key=lambda x: os.path.getmtime(os.path.join(Caminho_Download)))
-            Arquivo_Recente = os.path.join(Caminho_Download, NovoNome)
-            # condicional caso o arquivo mais recente seja na extensao csv
-            if Arquivo_Recente.endswith('.csv'):
+# def esperar_download(Caminho_Download, NovoNome, timeout=30):
+#     # estabelecendo um tempo limite que eh o tempo atual somado ao limite que eh 30 seg
+#     Tempo_Limite = time.time() + timeout
+#     # iniciando um loop
+#     while True:
+#         # se o tempo atual for acima do tempo limite ira aparecer uma mensagem de erro
+#         if time.time() > Tempo_Limite:
+#             raise Exception("Download do arquivo falhou/ultrapassou o tempo limite estabelecido.")
+#         Arquivos = os.listdir(Caminho_Download)
+#         if Arquivos:
+#             # ordena os arquivos no caminho especificado pela ultima data de modificacao
+#             Arquivos = sorted(Arquivos, key=lambda x: os.path.getmtime(os.path.join(Caminho_Download)))
+#             Arquivo_Recente = os.path.join(Caminho_Download, NovoNome)
+#             # condicional caso o arquivo mais recente seja na extensao csv
+#             if Arquivo_Recente.endswith('.csv'):
