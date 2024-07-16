@@ -51,6 +51,7 @@ actions = ActionChains(web)
 actions.double_click(Relatorio1).perform()
 # ira servir para qualquer relatorio que quiser baixar
 Baixar = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="div-dropdown-menu"]/button')))
+# comando em Javascript para clicar no elemento (que foi definido acima)
 web.execute_script("arguments[0].click()", Baixar)
 CSVFile = web.find_element(By.XPATH, '//*[@id="btn-text"]').click()
 
