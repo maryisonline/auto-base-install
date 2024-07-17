@@ -19,7 +19,15 @@ opcoes = webdriver.ChromeOptions()
 
 # definindo o caminho do download
 Caminho_Download = r'C:\Users\mary saotome\Desktop\teste-download'
-prefs = {'download.default_directory': Caminho_Download}
+prefs = {'download.default_directory': Caminho_Download, # define o local onde o download sera salvo
+         'profile.default_content_settings.popups': 0, # impede que popups sejam abertos
+         'directory_upgrade': True, # permite que o navegador salve o download diretamente na pasta especificada sem interrupcoes (janela de salvamento por exemplo)
+         'safebrowsing.enabled': True, # protecao adicional contra downloads maliciosos
+         'download.prompt_for_download': False, # desativa prompt de download para baixar automaticamente
+         'download.directory_upgrade': True, 
+         'profile.default_content_setting_values.automatic_downloads': 1, # permite downloads automaticos 
+         'profile.content_settings.exceptions.automatic_downloads.*.setting': 1 # permite excecoes para downloads automaticos
+         }
 
 # permite adicionar essas preferencias ao navegador utilizado 
 opcoes.add_experimental_option('prefs',prefs)
@@ -54,44 +62,3 @@ time.sleep(10)
 Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
 web.execute_script("arguments[0].click()", Baixar)
 CSVFile = wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
-
-# acima tudo ok nao mexer por ora --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# loop que ira tentar varias vezes verificar se o elemento do botao esta disponivel para ser interagido na pagina
-
-# def clicar_botao_executar(tentativa_maxima=10):
-#     tentativa=0
-#     # enquanto for verdadeiro, tente:
-#     while True:
-#         tentativa += 1
-#         if tentativa <= tentativa_maxima:
-#             try:
-#             # ira servir para qualquer relatorio que quiser baixar
-#                 Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
-#             # comando em Javascript para clicar no elemento (que foi definido acima)
-#                 web.execute_script("arguments[0].click()", Baixar)
-#                 print(f'Base baixada após {tentativa} tentativas.')
-#                 break
-#             except (TimeoutException, ElementNotInteractableException):
-#                 continue
-        
-#web.implicitly_wait(40)
-#CSVFile = wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
-
-# funcao para renomear o arquivo csv (Atendimentos Finalizados)
-# explicacao da funcao: 
-# def esperar_download(Caminho_Download, NovoNome, timeout=30):
-#     # estabelecendo um tempo limite que eh o tempo atual somado ao limite que eh 30 seg
-#     Tempo_Limite = time.time() + timeout
-#     # iniciando um loop
-#     while True:
-#         # se o tempo atual for acima do tempo limite ira aparecer uma mensagem de erro
-#         if time.time() > Tempo_Limite:
-#             raise Exception("Download do arquivo falhou/ultrapassou o tempo limite estabelecido.")
-#         Arquivos = os.listdir(Caminho_Download)
-#         if Arquivos:
-#             # ordena os arquivos no caminho especificado pela ultima data de modificacao
-#             Arquivos = sorted(Arquivos, key=lambda x: os.path.getmtime(os.path.join(Caminho_Download)))
-#             Arquivo_Recente = os.path.join(Caminho_Download, NovoNome)
-#             # condicional caso o arquivo mais recente seja na extensao csv
-#             if Arquivo_Recente.endswith('.csv'):
