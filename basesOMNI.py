@@ -41,36 +41,42 @@ ReportBuilder2 = web.find_element(By.XPATH, '//*[@id="inpaas-navbar-collapse"]/u
 iframe = web.find_element(By.ID, 'frame_middle')
 web.switch_to.frame(iframe)
 
-wait = WebDriverWait(web, 60)
+wait = WebDriverWait(web, 15)
 PastaCSUMIS = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[2]/div/div[1]/div[6]/a[1]')))
 PastaCSUMIS.click()
-
 # web.switch_to.default_content()
 
 # devera baixar o primeiro relatorio (Atendimentos Finalizados)
 Relatorio1 = web.find_element(By.CSS_SELECTOR, 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(1) > a > span.icon-text')
 actions = ActionChains(web)
 actions.double_click(Relatorio1).perform()
+time.sleep(10)
+Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
+web.execute_script("arguments[0].click()", Baixar)
+CSVFile = wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
+
+# acima tudo ok nao mexer por ora --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # loop que ira tentar varias vezes verificar se o elemento do botao esta disponivel para ser interagido na pagina
 
-def tentativa_botao():
-    # enquanto for verdadeiro, tente:
-    while True:
-        try:
-            # ira servir para qualquer relatorio que quiser baixar
-            Baixar = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="div-dropdown-menu"]/button')))
-            # comando em Javascript para clicar no elemento (que foi definido acima)
-            web.execute_script("arguments[0].click()", Baixar)
-
-            break
-        except (TimeoutException, ElementNotInteractableException):
-
-            continue
+# def clicar_botao_executar(tentativa_maxima=10):
+#     tentativa=0
+#     # enquanto for verdadeiro, tente:
+#     while True:
+#         tentativa += 1
+#         if tentativa <= tentativa_maxima:
+#             try:
+#             # ira servir para qualquer relatorio que quiser baixar
+#                 Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
+#             # comando em Javascript para clicar no elemento (que foi definido acima)
+#                 web.execute_script("arguments[0].click()", Baixar)
+#                 print(f'Base baixada após {tentativa} tentativas.')
+#                 break
+#             except (TimeoutException, ElementNotInteractableException):
+#                 continue
         
 #web.implicitly_wait(40)
-CSVFile = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#btn-text')))
-web.execute_script("arguments[0].click()", CSVFile)
+#CSVFile = wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
 
 # funcao para renomear o arquivo csv (Atendimentos Finalizados)
 # explicacao da funcao: 
