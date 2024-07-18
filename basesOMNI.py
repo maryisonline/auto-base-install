@@ -77,6 +77,11 @@ def BaixarRelatorios(web, wait, relatorio_css_selector):
     Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
     web.execute_script("arguments[0].click()", Baixar)
     wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
+    time.sleep(30)
+    RetornarPag = wait.until(EC.element_to_be_clickable((By. CSS_SELECTOR, 'body > div.row.editview > div.col-xs-9.col-sm-10.no-padding.view > div.row.header-catalog > div.col-xs-12.col-sm-6.no-padding.text-right > button.btn.btn-sm.btn-default.btn-vision-edit')))
+    web.execute_script("arguments[0].click()", RetornarPag)
+    PastaCSUMIS
+    PastaCSUMIS.click()
 
 BaixarRelatorios(web, wait, AtendimentosFinalizados)
 BaixarRelatorios(web, wait, Pendentes)
