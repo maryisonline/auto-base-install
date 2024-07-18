@@ -3,4 +3,4 @@ Esse projeto foi desenvolvido com a finalidade de automatizar tarefas de downloa
 
 ## Metodologia:
 O principal elemento do código é a biblioteca do **Selenium**, que basicamente fornece métodos de interagir com os elementos do navegador (ex.: button e input).
-Outra bibliteca usada é a **OS (Operational System)** na qual fora útil para renomear e redirecionar o caminho dos arquivos baixados.
+Outra bibliteca usada é a **OS** na qual interage com o sistema operacional do computador para renomear e redirecionar o caminho dos arquivos baixados.
