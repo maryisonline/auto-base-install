@@ -59,8 +59,7 @@ iframe = web.find_element(By.ID, 'frame_middle')
 web.switch_to.frame(iframe)
 
 wait = WebDriverWait(web, 30)
-PastaCSUMIS = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[2]/div/div[1]/div[6]/a[1]')))
-PastaCSUMIS.click()
+
 # web.switch_to.default_content()
 
 AtendimentosFinalizados = 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(1) > a > span.icon-text'
@@ -70,6 +69,8 @@ Pendentes = 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-
 # pode-se observar que em ambos eh chamado os mesmos parametros porem eh mudado o parametro de relatorio_css_selector ja q ele eh relativo e os demais serao os mesmos
 def BaixarRelatorios(web, wait, relatorio_css_selector):
     # funcao que ira baixar os dois relatorios
+    PastaCSUMIS = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[2]/div/div[1]/div[6]/a[1]')))
+    PastaCSUMIS.click()
     Relatorio = web.find_element(By.CSS_SELECTOR, relatorio_css_selector)
     actions = ActionChains(web)
     actions.double_click(Relatorio).perform()
@@ -80,8 +81,6 @@ def BaixarRelatorios(web, wait, relatorio_css_selector):
     time.sleep(30)
     RetornarPag = wait.until(EC.element_to_be_clickable((By. CSS_SELECTOR, 'body > div.row.editview > div.col-xs-9.col-sm-10.no-padding.view > div.row.header-catalog > div.col-xs-12.col-sm-6.no-padding.text-right > button.btn.btn-sm.btn-default.btn-vision-edit')))
     web.execute_script("arguments[0].click()", RetornarPag)
-    PastaCSUMIS
-    PastaCSUMIS.click()
 
 BaixarRelatorios(web, wait, AtendimentosFinalizados)
 BaixarRelatorios(web, wait, Pendentes)
