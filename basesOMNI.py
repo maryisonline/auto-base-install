@@ -45,9 +45,9 @@ except Exception as Exception1:
 
 web.implicitly_wait(30)
 # acessando a pagina de login
-web.get("https://pernambucanas.plusoftomni.com.br/#/")
-Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('757572')
-Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('757572@PERNAMBUCANAS')
+web.get("https://site.site.com.br/#/")
+Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('XXX572')
+Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('XXX572@SITE')
 Entrar = web.find_element(By.XPATH,'//*[@id="loginBase"]/div[1]/div[5]/button').click()
 
 # processo para acessar o Report Builder
