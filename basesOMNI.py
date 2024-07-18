@@ -35,13 +35,13 @@ try:
     web = webdriver.Chrome(service=servico, options=opcoes)
 except Exception as Exception1:
     print(f'Tentativa mal-sucedida de usar o driver {Exception1}.')
-    print(f'Tentando prosseguir com as opções manuais do driver através do path informado.')
+    print(f'Tentando prosseguir com as opções manuais do driver através do {caminho_driver}.')
 
     try:
         servico_alternativo = Service(caminho_driver)
         web = webdriver.Chrome(service=servico_alternativo, options=opcoes)
     except Exception as Exception2:
-        print(f'Tentativa mal-sucedida de usar {Exception2}.')
+        print(f'Tentativa mal-sucedida de usar {Exception2}. Revise o código.')
 
 web.implicitly_wait(30)
 # acessando a pagina de login
