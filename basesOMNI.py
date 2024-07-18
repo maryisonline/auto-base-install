@@ -63,11 +63,40 @@ PastaCSUMIS = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/d
 PastaCSUMIS.click()
 # web.switch_to.default_content()
 
-# devera baixar o primeiro relatorio (Atendimentos Finalizados)
-Relatorio1 = web.find_element(By.CSS_SELECTOR, 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(1) > a > span.icon-text')
-actions = ActionChains(web)
-actions.double_click(Relatorio1).perform()
-time.sleep(10)
-Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
-web.execute_script("arguments[0].click()", Baixar)
-CSVFile = wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
+AtendimentosFinalizados = 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(1) > a > span.icon-text'
+Pendentes = 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(2) > a > span.icon-text'
+
+# explicacao da funcao -> os parametros definidos entre () estao presentes pq serao rechamados ao executar essa mesma funcao para os dois relatorios
+# pode-se observar que em ambos eh chamado os mesmos parametros porem eh mudado o parametro de relatorio_css_selector ja q ele eh relativo e os demais serao os mesmos
+def BaixarRelatorios(web, wait, relatorio_css_selector):
+    # funcao que ira baixar os dois relatorios
+    Relatorio = web.find_element(By.CSS_SELECTOR, relatorio_css_selector)
+    actions = ActionChains(web)
+    actions.double_click(Relatorio).perform()
+    time.sleep(10)
+    Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
+    web.execute_script("arguments[0].click()", Baixar)
+    wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
+
+BaixarRelatorios(web, wait, AtendimentosFinalizados)
+BaixarRelatorios(web, wait, Pendentes)
+
+Caminho_destino = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\imagens'
+
+antigNomeAf = 'CSU_Atendimentos_Finalizados'
+antigNomePendentes = 'Csu_Pendentes'
+
+novoNomeAf = 'CSU_BKO_Atendimentos Finalizados'
+novoNomePendentes = 'CSU_BKO_Pendentes'
+
+def RenomearArquivo(Caminho_Download, Caminho_destino, antigo_nome, novo_nome):
+    # retorna uma lista contendo os nomes das entradas no diretorio fornecido abaixo (por path)
+    for file in os.listdir(Caminho_Download):
+        if file.startswith(antigo_nome):
+            caminho_antigo = os.path.join(Caminho_Download, file)
+            caminho_novo = os.path.join(Caminho_destino, novo_nome)
+            os.rename(caminho_antigo, caminho_novo)
+            print(f'Arquivo renomeado de {antigo_nome} para {novo_nome}.')
+
+RenomearArquivo(Caminho_Download, Caminho_destino, antigNomeAf, novoNomeAf)
+RenomearArquivo(Caminho_Download, Caminho_destino, antigNomePendentes, novoNomePendentes)
