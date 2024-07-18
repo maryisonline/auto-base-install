@@ -14,28 +14,37 @@ import time
 import os
 
 # configuracoes do webdriver / o parametro "options" ajuda a definir as preferencias do navegador do Chrome
-servico = Service(ChromeDriverManager().install())
+# definindo o caminho do download no qual os arquivos baixados serao salvos
+Caminho_Download = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\downloadOMNI'
+caminho_driver = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\ChromeDriver\chromedriver.exe'
 opcoes = webdriver.ChromeOptions()
 
-# definindo o caminho do download
-Caminho_Download = r'C:\Users\mary saotome\Desktop\teste-download'
 prefs = {'download.default_directory': Caminho_Download, # define o local onde o download sera salvo
-         'profile.default_content_settings.popups': 0, # impede que popups sejam abertos
-         'directory_upgrade': True, # permite que o navegador salve o download diretamente na pasta especificada sem interrupcoes (janela de salvamento por exemplo)
-         'safebrowsing.enabled': True, # protecao adicional contra downloads maliciosos
-         'download.prompt_for_download': False, # desativa prompt de download para baixar automaticamente
-         'download.directory_upgrade': True, 
-         'profile.default_content_setting_values.automatic_downloads': 1, # permite downloads automaticos 
-         'profile.content_settings.exceptions.automatic_downloads.*.setting': 1 # permite excecoes para downloads automaticos
-         }
+          'profile.default_content_settings.popups': 0, # impede que popups sejam abertos
+          'directory_upgrade': True, # permite que o navegador salve o download diretamente na pasta especificada sem interrupcoes (janela de salvamento por exemplo)
+          'safebrowsing.enabled': True, # protecao adicional contra downloads maliciosos
+          'download.prompt_for_download': False, # desativa prompt de download para baixar automaticamente
+          'download.directory_upgrade': True # permite que o navegador salve o download diretamente na pasta especificada sem interrupcoes
+        }
 
 # permite adicionar essas preferencias ao navegador utilizado 
 opcoes.add_experimental_option('prefs',prefs)
 
-web = webdriver.Chrome(service=servico, options=opcoes)
-web.implicitly_wait(15)
+try:
+    servico = Service(ChromeDriverManager().install())
+    web = webdriver.Chrome(service=servico, options=opcoes)
+except Exception as Exception1:
+    print(f'Tentativa mal-sucedida de usar o driver {Exception1}.')
+    print(f'Tentando prosseguir com as opções manuais do driver através do path informado.')
 
-# pagina de login
+    try:
+        servico_alternativo = Service(caminho_driver)
+        web = webdriver.Chrome(service=servico_alternativo, options=opcoes)
+    except Exception as Exception2:
+        print(f'Tentativa mal-sucedida de usar {Exception2}.')
+
+web.implicitly_wait(30)
+# acessando a pagina de login
 web.get("https://pernambucanas.plusoftomni.com.br/#/")
 Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('757572')
 Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('757572@PERNAMBUCANAS')
@@ -49,7 +58,7 @@ ReportBuilder2 = web.find_element(By.XPATH, '//*[@id="inpaas-navbar-collapse"]/u
 iframe = web.find_element(By.ID, 'frame_middle')
 web.switch_to.frame(iframe)
 
-wait = WebDriverWait(web, 15)
+wait = WebDriverWait(web, 30)
 PastaCSUMIS = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[2]/div/div[1]/div[6]/a[1]')))
 PastaCSUMIS.click()
 # web.switch_to.default_content()
