@@ -90,15 +90,21 @@ Caminho_destino = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\imagens'
 antigNomeAf = 'CSU_Atendimentos_Finalizados'
 antigNomePendentes = 'Csu_Pendentes'
 
-novoNomeAf = 'CSU_BKO_Atendimentos Finalizados'
-novoNomePendentes = 'CSU_BKO_Pendentes'
+novoNomeAf = 'BKO_CSU_Atendimentos Finalizados.csv'
+novoNomePendentes = 'BKO_CSU_Pendentes.csv'
 
 def RenomearArquivo(Caminho_Download, Caminho_destino, antigo_nome, novo_nome):
     # retorna uma lista contendo os nomes das entradas no diretorio fornecido abaixo (por path)
     for file in os.listdir(Caminho_Download):
+        
         if file.startswith(antigo_nome):
+            
             caminho_antigo = os.path.join(Caminho_Download, file)
             caminho_novo = os.path.join(Caminho_destino, novo_nome)
+            
+            if os.path.exists(caminho_novo):
+                os.remove(caminho_novo)
+
             os.rename(caminho_antigo, caminho_novo)
             print(f'Arquivo renomeado de {antigo_nome} para {novo_nome}.')
 
