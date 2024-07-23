@@ -85,26 +85,30 @@ def BaixarRelatorios(web, wait, relatorio_css_selector):
 BaixarRelatorios(web, wait, AtendimentosFinalizados)
 BaixarRelatorios(web, wait, Pendentes)
 
+# definindo o caminho final onde os arquivos devem ficar
 Caminho_destino = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\imagens'
 
+# antigo nome do arquivo baixado
 antigNomeAf = 'CSU_Atendimentos_Finalizados'
 antigNomePendentes = 'Csu_Pendentes'
 
-novoNomeAf = 'BKO_CSU_Atendimentos Finalizados.csv'
+# como deve constar o novo nome quando renomeado
+novoNomeAf = 'BKO_CSU_Atendimentos_Finalizados.csv'
 novoNomePendentes = 'BKO_CSU_Pendentes.csv'
 
+# funcao que ira verificar se o arquivo ja existe no destino, se sim, ira apagar e colocar o novo, e renomeará tambem
 def RenomearArquivo(Caminho_Download, Caminho_destino, antigo_nome, novo_nome):
     # retorna uma lista contendo os nomes das entradas no diretorio fornecido abaixo (por path)
     for file in os.listdir(Caminho_Download):
-        
+        # se o arquivo começar com o antigo nome definido
         if file.startswith(antigo_nome):
-            
+            # definindo quais sao os antigos nome e caminho e quais sao o novo nome e caminho
             caminho_antigo = os.path.join(Caminho_Download, file)
             caminho_novo = os.path.join(Caminho_destino, novo_nome)
-            
+            # se o arquivo ja existe no caminho de destino ira remover
             if os.path.exists(caminho_novo):
                 os.remove(caminho_novo)
-
+            # entao ira renomear e redirecionar os arquivos para o caminho destino
             os.rename(caminho_antigo, caminho_novo)
             print(f'Arquivo renomeado de {antigo_nome} para {novo_nome}.')
 
