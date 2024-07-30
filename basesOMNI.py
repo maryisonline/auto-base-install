@@ -1,5 +1,6 @@
 # codigo feito para a automatizacao da atividade de baixar bases do OMNI
-# desenvolvido por Mary Castro 
+# desenvolvido por Mary Castro
+# LEMBRETE: todos os caminhos, usuarios e senhas desse codigo são HIPOTETICOS.
 
 # importando bibliotecas
 from selenium import webdriver
@@ -15,8 +16,8 @@ import os
 
 # configuracoes do webdriver / o parametro "options" ajuda a definir as preferencias do navegador do Chrome
 # definindo o caminho do download no qual os arquivos baixados serao salvos
-Caminho_Download = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\downloadOMNI'
-caminho_driver = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\ChromeDriver\chromedriver.exe'
+Caminho_Download = r'G:\CAMINHO_DOWNLOAD\downloadOMNI'
+caminho_driver = r'G:\ChromeDriver\chromedriver.exe'
 opcoes = webdriver.ChromeOptions()
 
 prefs = {'download.default_directory': Caminho_Download, # define o local onde o download sera salvo
@@ -46,8 +47,8 @@ except Exception as Exception1:
 web.implicitly_wait(30)
 # acessando a pagina de login
 web.get("https://site.site.com.br/#/")
-Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('XXX572')
-Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('XXX572@SITE')
+Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('XXX578')
+Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('XXX578@SITE')
 Entrar = web.find_element(By.XPATH,'//*[@id="loginBase"]/div[1]/div[5]/button').click()
 
 # processo para acessar o Report Builder
@@ -65,9 +66,13 @@ wait = WebDriverWait(web, 30)
 AtendimentosFinalizados = 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(1) > a > span.icon-text'
 Pendentes = 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(2) > a > span.icon-text'
 
+# antigo nome do arquivo baixado
+antigNomeAf = 'CSU_Atendimentos_Finalizados'
+antigNomePendentes = 'Csu_Pendentes'
+
 # explicacao da funcao -> os parametros definidos entre () estao presentes pq serao rechamados ao executar essa mesma funcao para os dois relatorios
 # pode-se observar que em ambos eh chamado os mesmos parametros porem eh mudado o parametro de relatorio_css_selector ja q ele eh relativo e os demais serao os mesmos
-def BaixarRelatorios(web, wait, relatorio_css_selector):
+def BaixarRelatorios(web, wait, relatorio_css_selector, antigo_nome):
     # funcao que ira baixar os dois relatorios
     PastaCSUMIS = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[2]/div/div[1]/div[6]/a[1]')))
     PastaCSUMIS.click()
@@ -78,23 +83,35 @@ def BaixarRelatorios(web, wait, relatorio_css_selector):
     Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
     web.execute_script("arguments[0].click()", Baixar)
     wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
-    time.sleep(30)
+    # definindo o valor inicial dos segundos que serao contados
+    segundos = 0
+    # um loop que ira aguardar ate 300 segundos ate localizar o arquivo que deve ser baixado para prosseguir com o codigo
+    while not any(file.startswith(antigo_nome) for file in os.listdir(Caminho_Download)):
+        time.sleep(1)
+        segundos += 1
+        if segundos > 300:
+            print(f'O arquivo {antigo_nome} demorou muito para baixar dentro do tempo limite.')
+            return False
+
+    print(f'O arquivo {antigo_nome} foi baixado com sucesso.')
+
     RetornarPag = wait.until(EC.element_to_be_clickable((By. CSS_SELECTOR, 'body > div.row.editview > div.col-xs-9.col-sm-10.no-padding.view > div.row.header-catalog > div.col-xs-12.col-sm-6.no-padding.text-right > button.btn.btn-sm.btn-default.btn-vision-edit')))
     web.execute_script("arguments[0].click()", RetornarPag)
+    return True
 
 BaixarRelatorios(web, wait, AtendimentosFinalizados)
 BaixarRelatorios(web, wait, Pendentes)
 
 # definindo o caminho final onde os arquivos devem ficar
-Caminho_destino = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\imagens'
+Caminho_destino = r'G:caminho\destino_final'
 
 # antigo nome do arquivo baixado
-antigNomeAf = 'CSU_Atendimentos_Finalizados'
-antigNomePendentes = 'Csu_Pendentes'
+antigNomeAf = 'BKO_Atendimentos_Finalizados'
+antigNomePendentes = 'Bko_Pendentes'
 
 # como deve constar o novo nome quando renomeado
-novoNomeAf = 'BKO_CSU_Atendimentos_Finalizados.csv'
-novoNomePendentes = 'BKO_CSU_Pendentes.csv'
+novoNomeAf = 'BKO_Atendimentos_Finalizados.csv'
+novoNomePendentes = 'BKO_Pendentes.csv'
 
 # funcao que ira verificar se o arquivo ja existe no destino, se sim, ira apagar e colocar o novo, e renomeará tambem
 def RenomearArquivo(Caminho_Download, Caminho_destino, antigo_nome, novo_nome):
@@ -114,3 +131,5 @@ def RenomearArquivo(Caminho_Download, Caminho_destino, antigo_nome, novo_nome):
 
 RenomearArquivo(Caminho_Download, Caminho_destino, antigNomeAf, novoNomeAf)
 RenomearArquivo(Caminho_Download, Caminho_destino, antigNomePendentes, novoNomePendentes)
+
+web.quit()
