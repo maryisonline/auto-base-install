@@ -44,7 +44,7 @@ except Exception as Exception1:
     except Exception as Exception2:
         print(f'Tentativa mal-sucedida de usar {Exception2}. Revise o código.')
 
-web.implicitly_wait(30)
+web.implicitly_wait(60)
 # acessando a pagina de login
 web.get("https://site.site.com.br/#/")
 Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('XXX578')
@@ -59,7 +59,7 @@ ReportBuilder2 = web.find_element(By.XPATH, '//*[@id="inpaas-navbar-collapse"]/u
 iframe = web.find_element(By.ID, 'frame_middle')
 web.switch_to.frame(iframe)
 
-wait = WebDriverWait(web, 30)
+wait = WebDriverWait(web, 60)
 
 # web.switch_to.default_content()
 
@@ -79,7 +79,7 @@ def BaixarRelatorios(web, wait, relatorio_css_selector, antigo_nome):
     Relatorio = web.find_element(By.CSS_SELECTOR, relatorio_css_selector)
     actions = ActionChains(web)
     actions.double_click(Relatorio).perform()
-    time.sleep(10)
+    time.sleep(20)
     Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
     web.execute_script("arguments[0].click()", Baixar)
     wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
