@@ -1,5 +1,6 @@
 # codigo feito para a automatizacao da atividade de baixar bases do OMNI
-# desenvolvido por Mary Castro 
+# desenvolvido por Mary Castro
+# LEMBRETE: todos os caminhos, usuarios e senhas desse codigo são HIPOTETICOS.
 
 # importando bibliotecas
 from selenium import webdriver
@@ -17,19 +18,19 @@ import sys
 def bases():
     
     # definindo o caminho do download no qual os arquivos baixados serao salvos a principio
-    Caminho_Download = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\downloadOMNI'
+    Caminho_Download = r'C:\exemplo_caminho\download'
     # definindo o caminho manual caso ocorra um erro com Service(ChromeDriverManager().install())
-    caminho_driver = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\ChromeDriver\chromedriver.exe'
+    caminho_driver = r'C:\exemplo_caminho\ChromeDriver\chromedriver.exe'
     # definindo o caminho final onde os arquivos devem ficar
-    Caminho_destino = r'G:\02. TRAFEGO\03.PLANILHAS ÚTEIS\mary\destinoOMNI'
-
+    Caminho_destino = r'C:\exemplo_caminho\destino'
+    
     # como deve constar o novo nome quando renomeado
-    novoNomeAf = 'BKO_CSU_Atendimentos_Finalizados.csv'
-    novoNomePendentes = 'BKO_CSU_Pendentes.csv'
+    novoNomeAf = 'Arquivo_1.csv'
+    novoNomePendentes = 'Arquivo_2.csv'
 
     # antigo nome do arquivo baixado
-    antigNomeAf = 'CSU_Atendimentos_Finalizados'
-    antigNomePendentes = 'Csu_Pendentes'
+    antigNomeAf = 'Arquivo1'
+    antigNomePendentes = 'Arquivo2'
 
     # configuracoes do webdriver / o parametro "options" ajuda a definir as preferencias do navegador do Chrome
     opcoes = webdriver.ChromeOptions()
@@ -55,9 +56,9 @@ def bases():
 
     web.implicitly_wait(300)
     # acessando a pagina de login
-    web.get("https://pernambucanas.plusoftomni.com.br/#/")
-    Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('757572')
-    Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('757572@PERNAMBUCANAS')
+    web.get("https://site.com.br//")
+    Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('digitar_login')
+    Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('digitar_senha')
     Entrar = web.find_element(By.XPATH,'//*[@id="loginBase"]/div[1]/div[5]/button').click()
 
     # processo para acessar o Report Builder
