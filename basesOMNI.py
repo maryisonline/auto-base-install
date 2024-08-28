@@ -56,7 +56,7 @@ def bases():
 
     web.implicitly_wait(300)
     # acessando a pagina de login
-    web.get("https://pernambucanas.plusoftomni.com.br/#/")
+    web.get("https://site.com.br//")
     Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('digitar_login')
     Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('digitar_senha')
     Entrar = web.find_element(By.XPATH,'//*[@id="loginBase"]/div[1]/div[5]/button').click()
