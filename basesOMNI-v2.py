@@ -93,15 +93,6 @@ def bases():
             wait
             # definindo o valor inicial dos segundos que serao contados
             segundos = 0
-            # um loop que ira aguardar ate 300 segundos ate localizar o arquivo que deve ser baixado para prosseguir com o codigo
-            while not any(file.startswith(antigo_nome) for file in os.listdir(Caminho_Download)):
-                    time.sleep(1)
-                    segundos += 1
-                    # se passar de 10 minutos e nao baixar, ira tentar novamente
-                    if segundos > 600:
-                        print(f'Tempo excedido. Tentando novamente.')
-                        TentarNovamente()
-            
             tentativas = 0
 
             def TentarNovamente():
@@ -112,8 +103,17 @@ def bases():
                 else:
                     Baixar
                     web.execute_script("arguments[0].click()", Baixar)
-                    wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()                  
-
+                    wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()   
+                    
+            # um loop que ira aguardar ate 300 segundos ate localizar o arquivo que deve ser baixado para prosseguir com o codigo
+            while not any(file.startswith(antigo_nome) for file in os.listdir(Caminho_Download)):
+                    time.sleep(1)
+                    segundos += 1
+                    # se passar de 10 minutos e nao baixar, ira tentar novamente
+                    if segundos > 600:
+                        print(f'Tempo excedido. Tentando novamente.')
+                        TentarNovamente()
+                        
         # except Exception as e:
         #     print(f'{e} Não foi possível baixar: {antigo_nome}.')
         #     sys.exit()
