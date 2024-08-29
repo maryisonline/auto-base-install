@@ -1,6 +1,6 @@
-# codigo feito para a automatizacao da atividade de baixar bases do OMNI
+# codigo feito para a automatizacao da atividade de baixar bases de um site
 # desenvolvido por Mary Castro
-# LEMBRETE: todos os caminhos, usuarios e senhas desse codigo são HIPOTETICOS.
+# caminhos e credenciais hipoteticos
 
 # importando bibliotecas
 from selenium import webdriver
@@ -13,24 +13,23 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import os
 import schedule
-import sys
 
 def bases():
     
     # definindo o caminho do download no qual os arquivos baixados serao salvos a principio
-    Caminho_Download = r'C:\exemplo_caminho\download'
+    Caminho_Download = r'C:\Caminho\Download'
     # definindo o caminho manual caso ocorra um erro com Service(ChromeDriverManager().install())
-    caminho_driver = r'C:\exemplo_caminho\ChromeDriver\chromedriver.exe'
+    caminho_driver = r'C:\Caminho\ChromeDriver\chromedriver.exe'
     # definindo o caminho final onde os arquivos devem ficar
-    Caminho_destino = r'C:\exemplo_caminho\destino'
+    Caminho_destino = r'C:\Caminho\Destino'
 
     # como deve constar o novo nome quando renomeado
-    novoNomeAf = 'Arquivo_1.csv'
-    novoNomePendentes = 'Arquivo_2.csv'
+    novoNome1 = 'Arquivo_1'
+    novoNome2 = 'Arquivo_2'
 
     # antigo nome do arquivo baixado
-    antigNomeAf = 'Arquivo1'
-    antigNomePendentes = 'Arquivo2'
+    antigNome1 = 'Arquivo1'
+    antigNome2 = 'Arquivo2'
 
     # configuracoes do webdriver / o parametro "options" ajuda a definir as preferencias do navegador do Chrome
     opcoes = webdriver.ChromeOptions()
@@ -44,6 +43,7 @@ def bases():
     # permite adicionar essas preferencias ao navegador utilizado 
     opcoes.add_experimental_option('prefs',prefs)
 
+    # try except para o possivel erro do uso do servico do ChromeDriver, sendo necessario utilizar uma versao 'manual' para prosseguir
     try:
         servico = Service(ChromeDriverManager().install())
         web = webdriver.Chrome(service=servico, options=opcoes)
@@ -56,14 +56,14 @@ def bases():
 
     web.implicitly_wait(300)
     # acessando a pagina de login
-    web.get("https://site.com.br//")
-    Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('digitar_login')
-    Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('digitar_senha')
+    web.get("https://site.com.br/#/")
+    Login = web.find_element(By.XPATH, '//*[@id="login__username"]').send_keys('LOGIN123')
+    Senha = web.find_element(By.XPATH, '//*[@id="login__password"]').send_keys('SENHA123')
     Entrar = web.find_element(By.XPATH,'//*[@id="loginBase"]/div[1]/div[5]/button').click()
 
     # processo para acessar o Report Builder
-    ReportBuilder1 = web.find_element(By.XPATH, '//*[@id="inpaas-navbar-collapse"]/ul[1]/li/a/small').click()
-    ReportBuilder2 = web.find_element(By.XPATH, '//*[@id="inpaas-navbar-collapse"]/ul[1]/li/ul/li[6]/a').click()
+    Relatorio1 = web.find_element(By.XPATH, '//*[@id="inpaas-navbar-collapse"]/ul[1]/li/a/small').click()
+    Relatorio2 = web.find_element(By.XPATH, '//*[@id="inpaas-navbar-collapse"]/ul[1]/li/ul/li[6]/a').click()
 
     # irá trocar o iframe presente na pagina que impede de localizar o xpath dos elementos
     iframe = web.find_element(By.ID, 'frame_middle')
@@ -73,56 +73,36 @@ def bases():
 
     # web.switch_to.default_content()
 
-    xpath_arquivo_1 = 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(1) > a > span.icon-text'
-    xpath_arquivo_2 = 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(2) > a > span.icon-text'
+    Xpath1 = 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(1) > a > span.icon-text'
+    Xpath2 = 'body > div.container-fluid.my-view-itens > div > div.col-xs-12.col-sm-9.col-lg-10 > div > div.col-xs-12.col-sm-8.col-lg-9.my-views > div:nth-child(2) > a > span.icon-text'
 
-    # explicacao da funcao -> os parametros definidos entre () estao presentes pq serao rechamados ao executar essa mesma funcao para os dois relatorios
-    # pode-se observar que em ambos eh chamado os mesmos parametros porem eh mudado o parametro de relatorio_css_selector ja q ele eh relativo e os demais serao os mesmos
-    def BaixarRelatorios(web, wait, relatorio_css_selector, antigo_nome):
-        try:
-            # funcao que ira baixar os dois relatorios
-            AcessarPasta = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[2]/div/div[1]/div[6]/a[1]')))
-            AcessarPasta.click()
-            Relatorio = web.find_element(By.CSS_SELECTOR, relatorio_css_selector)
-            actions = ActionChains(web)
-            actions.double_click(Relatorio).perform()
-            time.sleep(20)
-            Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
-            web.execute_script("arguments[0].click()", Baixar)
-            wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
-            # definindo o valor inicial dos segundos que serao contados
-            segundos = 0
-            # um loop que ira aguardar ate 300 segundos ate localizar o arquivo que deve ser baixado para prosseguir com o codigo
-            while not any(file.startswith(antigo_nome) for file in os.listdir(Caminho_Download)):
-                time.sleep(1)
-                segundos += 1
-                if segundos > 500:
-                    print(f'O arquivo {antigo_nome} demorou muito para baixar dentro do tempo limite.')
-                    sys.exit()
-        except Exception as ErroBaixar:
-            print(f'Não foi possível baixar: {antigo_nome}. {ErroBaixar}')
-            sys.exit()
-        else:
-            print(f'Arquivo baixado: {antigo_nome}')
-        finally:
-            RetornarPag = wait.until(EC.element_to_be_clickable((By. CSS_SELECTOR, 'body > div.row.editview > div.col-xs-9.col-sm-10.no-padding.view > div.row.header-catalog > div.col-xs-12.col-sm-6.no-padding.text-right > button.btn.btn-sm.btn-default.btn-vision-edit')))
-            web.execute_script("arguments[0].click()", RetornarPag)
-            return True
+    def Tentativa():
+        Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
+        web.execute_script("arguments[0].click()", Baixar)
+        wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
+        wait.until(EC.invisibility_of_element_located((By. CSS_SELECTOR, '.load-wait')))
 
-    BaixarRelatorios(web, wait, AtendimentosFinalizados, antigNomeAf)
-    BaixarRelatorios(web, wait, Pendentes, antigNomePendentes) 
+    def CaminhoPag(web, wait, relatorio_css_selector, antigo_nome):
+        AcessoPasta = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[2]/div/div[1]/div[6]/a[1]')))
+        AcessoPasta.click()
+        Relatorio = web.find_element(By.CSS_SELECTOR, relatorio_css_selector)
+        actions = ActionChains(web)
+        actions.double_click(Relatorio).perform()
+        time.sleep(20)
+        Tentativa()
 
-    # caso o arquivo nao tenha sido baixado, a automatização é cancelada      
-    def ChecaDownload(Caminho_Download, antigo_nome):
-        if not any(file.startswith(antigo_nome) for file in os.listdir(Caminho_Download)):
-            print(f'O arquivo {antigo_nome} NÃO foi baixado. Encerrando a automação.')
-            sys.exit()
-        else:
-            print(f'Arquivo {antigo_nome} presente na pasta.')
+        while not any(file.startswith(antigo_nome) for file in os.listdir(Caminho_Download)):
+            print(f'O arquivo {antigo_nome} não foi baixado. Tentando novamente.')
+            Tentativa()
+        
+        print(f'Arquivo {antigo_nome} presente na pasta.')
+        RetornarPag = wait.until(EC.element_to_be_clickable((By. CSS_SELECTOR, 'body > div.row.editview > div.col-xs-9.col-sm-10.no-padding.view > div.row.header-catalog > div.col-xs-12.col-sm-6.no-padding.text-right > button.btn.btn-sm.btn-default.btn-vision-edit')))
+        web.execute_script("arguments[0].click()", RetornarPag)
+        return True
 
-    ChecaDownload(Caminho_Download, antigNomeAf)
-    ChecaDownload(Caminho_Download, antigNomePendentes)
-    
+    CaminhoPag(web, wait, Xpath1, antigNome1)
+    CaminhoPag(web, wait, Xpath2, antigNome2)
+
     # funcao que ira verificar se o arquivo ja existe no destino, se sim, ira apagar e colocar o novo, e renomeará tambem
     def RenomearArquivo(Caminho_Download, Caminho_destino, antigo_nome, novo_nome):
         
@@ -140,8 +120,8 @@ def bases():
                     os.rename(caminho_antigo, caminho_novo)
                     print(f'Arquivo renomeado de {antigo_nome} para {novo_nome}.')
 
-    RenomearArquivo(Caminho_Download, Caminho_destino, antigNomeAf, novoNomeAf)
-    RenomearArquivo(Caminho_Download, Caminho_destino, antigNomePendentes, novoNomePendentes)
+    RenomearArquivo(Caminho_Download, Caminho_destino, antigNome1, novoNome1)
+    RenomearArquivo(Caminho_Download, Caminho_destino, antigNome2, novoNome2)
 
     # fechar o navegador
     web.quit()
