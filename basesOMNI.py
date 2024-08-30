@@ -78,7 +78,9 @@ def bases():
 
     def Tentativa():
         Baixar = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#div-dropdown-menu > button')))
+        wait.until(EC.invisibility_of_element_located((By. CSS_SELECTOR, '.load-wait')))
         web.execute_script("arguments[0].click()", Baixar)
+        wait.until(EC.invisibility_of_element_located((By. CSS_SELECTOR, '.load-wait')))
         wait.until(EC.element_to_be_clickable((By.ID, 'btn-text'))).click()
         wait.until(EC.invisibility_of_element_located((By. CSS_SELECTOR, '.load-wait')))
 
